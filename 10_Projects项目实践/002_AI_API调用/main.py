@@ -7,19 +7,31 @@ load_dotenv()
 
 
 client = OpenAI(
-    api_key=os.getenv("OPENAI_API_KEY")
+    api_key=os.getenv("DEEPSEEK_API_KEY"),
+    base_url="https://api.deepseek.com"
 )
 
 
-response = client.chat.completions.create(
-    model="gpt-5",
-    messages=[
-        {
-            "role": "user",
-            "content": "什么是AI Agent?"
-        }
-    ]
-)
+def ask_ai(question):
+
+    response = client.chat.completions.create(
+        model="deepseek-chat",
+        messages=[
+            {
+                "role":"user",
+                "content":question
+            }
+        ]
+    )
+
+    return response.choices[0].message.content
 
 
-print(response.choices[0].message.content)
+
+if __name__ == "__main__":
+
+    result = ask_ai(
+        "什么是建筑行业AI Agent?"
+    )
+
+    print(result)
