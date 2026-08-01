@@ -1,11 +1,14 @@
 import json
 
+from .base import BaseSkill
 from .llm_response import parse_json_response
 from .prompt_loader import PROJECT_ROOT, load_prompt
 
 
-class MaterialAnalysisSkill:
+class MaterialAnalysisSkill(BaseSkill):
     """根据进度数据和独立知识规则生成阶段材料计划。"""
+
+    name = "material_analysis"
 
     def __init__(self, client):
         self.client = client

@@ -2,11 +2,14 @@ import json
 
 from tools.schedule_tool import generate_months
 
+from .base import BaseSkill
 from .prompt_loader import load_prompt
 
 
-class MonthlyMaterialSkill:
+class MonthlyMaterialSkill(BaseSkill):
     """计算阶段月份并生成月材料计划。"""
+
+    name = "monthly_material"
 
     def __init__(self, client):
         self.client = client

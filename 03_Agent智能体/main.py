@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from openai import OpenAI
 
 from agents.material_planning_agent import MaterialPlanningAgent
+from skills.bootstrap import create_skill_router
 
 
 PROJECT_ROOT = Path(__file__).resolve().parent
@@ -21,7 +22,8 @@ def create_client():
 
 
 def run(file_path):
-    agent = MaterialPlanningAgent(create_client())
+    router = create_skill_router(create_client())
+    agent = MaterialPlanningAgent(router=router)
     result = agent.run(file_path)
 
     print("施工进度解析完成")
