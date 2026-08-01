@@ -22,7 +22,7 @@ def load_prompt(filename):
 
 
 
-class MaterialAgent:
+class ScheduleMaterialAgent:
 
 
     def __init__(self, client):
@@ -31,12 +31,12 @@ class MaterialAgent:
 
 
         self.prompt = load_prompt(
-            "material_agent.txt"
+            "schedule_material_agent.txt"
         )
 
 
 
-    def run(self, progress_data):
+    def run(self, material_data):
 
 
         response = self.client.chat.completions.create(
@@ -49,7 +49,6 @@ class MaterialAgent:
 
 
                 {
-
                     "role":"system",
 
                     "content":self.prompt
@@ -58,20 +57,17 @@ class MaterialAgent:
 
 
                 {
-
                     "role":"user",
 
                     "content":
                     f"""
-以下是施工进度解析结果：
+以下是阶段材料计划：
 
-{progress_data}
+{material_data}
 
 
-请分析全部施工阶段，
-生成完整材料需求计划。
+请生成月度材料计划。
 """
-
                 }
 
             ]
