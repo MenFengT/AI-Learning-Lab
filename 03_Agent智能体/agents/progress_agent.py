@@ -1,4 +1,7 @@
 # 进度解析Agent
+
+
+import re
 import json
 
 from openai import OpenAI
@@ -70,8 +73,18 @@ class ProgressAgent:
 
         )
 
-
         result = response.choices[0].message.content
 
+        # 去除markdown代码块
 
-        return result
+        result = re.sub(
+            r"```json|```",
+            "",
+            result
+        ).strip()
+
+        data = json.loads(
+            result
+        )
+
+        return data

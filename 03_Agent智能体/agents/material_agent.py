@@ -1,3 +1,6 @@
+import json
+import re
+
 from pathlib import Path
 
 
@@ -78,5 +81,16 @@ class MaterialAgent:
 
         )
 
+        result = response.choices[0].message.content
 
-        return response.choices[0].message.content
+        result = re.sub(
+            r"```json|```",
+            "",
+            result
+        ).strip()
+
+        data = json.loads(
+            result
+        )
+
+        return data
