@@ -1,90 +1,14 @@
-# 进度解析Agent
-
-
-import re
-import json
-
-from openai import OpenAI
-
-from pathlib import Path
-
-from parsers.file_parser import parse_file
-
-
-
-def load_prompt(filename):
-
-    path = (
-        Path(__file__)
-        .parent
-        .parent
-        /
-        "prompts"
-        /
-        filename
-    )
-
-    return path.read_text(
-        encoding="utf-8"
-    )
-
-
+from skills.parser_skill import FileParserSkill
+from skills.progress_skill import ProgressExtractionSkill
 
 
 class ProgressAgent:
+    """兼容旧接口：只编排文件解析与进度提取 Skill。"""
 
+    def __init__(self, client):
+        self.parser_skill = FileParserSkill()
+        self.progress_skill = ProgressExtractionSkill(client)
 
-    def __init__(self,client):
-
-        self.client = client
-
-
-        self.prompt = load_prompt(
-            "progress_agent.txt"
-        )
-
-
-
-    def run(self,file_path):
-
-
-        content = parse_file(
-            file_path
-        )
-
-
-        response = self.client.chat.completions.create(
-
-            model="deepseek-chat",
-
-            messages=[
-
-                {
-                    "role":"system",
-                    "content":self.prompt
-                },
-
-                {
-                    "role":"user",
-                    "content":content
-                }
-
-            ]
-
-        )
-
-        result = response.choices[0].message.content
-
-        # 去除markdown代码块
-
-        result = re.sub(
-            r"```json|```",
-            "",
-            result
-        ).strip()
-
-        data = json.loads(
-            result
-        )
-
-        return data
+    def run(self, file_path):
+        content = self.parser_skill.run(file_path)
+        return self.progress_skill.run(content)

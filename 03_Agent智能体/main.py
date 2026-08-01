@@ -1,131 +1,46 @@
-from openai import OpenAI
-from dotenv import load_dotenv
-
+import argparse
 import os
-import json
+from pathlib import Path
 
+from dotenv import load_dotenv
+from openai import OpenAI
 
-from agents.progress_agent import ProgressAgent
-from agents.material_agent import MaterialAgent
-from agents.schedule_material_agent import ScheduleMaterialAgent
+from agents.material_planning_agent import MaterialPlanningAgent
 
 
-from tools.json_tool import save_json
+PROJECT_ROOT = Path(__file__).resolve().parent
+DEFAULT_INPUT = PROJECT_ROOT / "test_data" / "施工进度计划（001）.xlsx"
 
 
+def create_client():
+    load_dotenv()
+    return OpenAI(
+        api_key=os.getenv("DEEPSEEK_API_KEY"),
+        base_url="https://api.deepseek.com",
+    )
 
-load_dotenv()
 
+def run(file_path):
+    agent = MaterialPlanningAgent(create_client())
+    result = agent.run(file_path)
 
+    print("施工进度解析完成")
+    print("阶段材料分析完成")
+    print("月材料计划生成完成")
+    return result
 
-client = OpenAI(
 
-    api_key=os.getenv(
-        "DEEPSEEK_API_KEY"
-    ),
+def parse_args():
+    parser = argparse.ArgumentParser(description="生成建筑项目材料计划")
+    parser.add_argument(
+        "file_path",
+        nargs="?",
+        default=str(DEFAULT_INPUT),
+        help="施工进度文件路径",
+    )
+    return parser.parse_args()
 
-    base_url="https://api.deepseek.com"
 
-)
-
-
-
-# =====================
-# 1 进度解析
-# =====================
-
-
-progress_agent = ProgressAgent(
-    client
-)
-
-
-file_path = r"E:\施工进度计划（001）.xlsx"
-
-
-
-progress_result = progress_agent.run(
-    file_path
-)
-
-
-
-save_json(
-
-    progress_result,
-
-    "progress.json"
-
-)
-
-
-
-print(
-"施工进度解析完成"
-)
-
-
-
-# =====================
-# 2 阶段材料
-# =====================
-
-
-material_agent = MaterialAgent(
-    client
-)
-
-
-material_result = material_agent.run(
-    progress_result
-)
-
-
-
-save_json(
-
-    material_result,
-
-    "material_plan.json"
-
-)
-
-
-print(
-"阶段材料分析完成"
-)
-
-
-
-# =====================
-# 3 月材料计划
-# =====================
-
-
-schedule_agent = ScheduleMaterialAgent(
-    client
-)
-
-
-monthly_result = schedule_agent.run(
-
-    progress_result,
-
-    material_result
-
-)
-
-
-save_json(
-
-    monthly_result,
-
-    "monthly_material_plan.json"
-
-)
-
-
-
-print(
-"月材料计划生成完成"
-)
+if __name__ == "__main__":
+    args = parse_args()
+    run(args.file_path)
