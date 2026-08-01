@@ -1,12 +1,14 @@
 # Construction AI Agent Framework Architecture
 
-版本：`v2.1-agent-framework`
+版本：`v2.1-agent-framework`（P2.0 SkillHub 目录迁移）
 
 基线版本：`v2.0-agent-skill`
 
 ## 目标
 
-将静态 Agent + Skill 调用升级为可注册、可路由、可扩展的 Agent Framework，同时保持材料计划现有调用流程与输出不变。
+将静态 Agent + Skill 调用升级为可注册、可路由、可扩展的 Agent Framework，并以单 Agent SkillHub 模式运行，同时保持材料计划现有调用流程与输出不变。
+
+项目位于多项目容器 `03_Agent智能体/001_建筑企业SkillHub/`，拥有独立的代码、知识、提示词、测试数据和输出目录。
 
 ## 核心原则
 
@@ -54,7 +56,7 @@ Router 不修改业务数据，不改变 Skill 输出。
 ## 组件结构
 
 ```text
-03_Agent智能体/
+03_Agent智能体/001_建筑企业SkillHub/
 ├── agents/
 │   ├── material_planning_agent.py
 │   ├── progress_agent.py
@@ -75,6 +77,14 @@ Router 不修改业务数据，不改变 Skill 输出。
 ├── outputs/
 └── tests/
 ```
+
+## 单 Agent SkillHub 模式
+
+`MaterialPlanningAgent` 是当前唯一正式业务 Agent，负责根据固定业务流程选择能力名称并通过 Router 调用。
+
+所有实际能力都保留为可注册 Skill。新增文件格式、知识规则、导出格式或计算能力时，应优先扩展 SkillHub，不新增业务 Agent。
+
+为保持旧接口兼容，`ProgressAgent`、`MaterialAgent`、`ScheduleMaterialAgent` 包装器暂时保留；它们只转发 Router 调用，不参与正式 Agent 拓扑，也不得承载新业务逻辑。
 
 ## 运行时数据流
 
@@ -131,17 +141,11 @@ class DrawingParseSkill(BaseSkill):
         ...
 ```
 
-## 扩展新 Agent
+## 扩展策略
 
-DrawingAgent、CostAgent 等新 Agent 必须通过构造参数接收 `SkillRouter`。为兼容旧调用方式，可以委托装配函数创建 Router，但 Agent 文件中不得引用具体 Skill 类。
+当前阶段采用单 Agent 模式。图纸解析、成本分析、质量检查、安全检查等能力应首先作为新 Skill 注册到 SkillHub，由 `MaterialPlanningAgent` 或后续统一命名的企业 Agent 编排。
 
-推荐调用形式：
-
-```python
-router = create_skill_router(client)
-agent = DrawingAgent(router=router)
-result = agent.run(task)
-```
+只有当新业务拥有独立目标、独立状态和独立决策流程，且无法由现有 Agent 合理编排时，才评审是否增加业务 Agent；P2.0 不新增业务 Agent。
 
 ## 兼容策略
 

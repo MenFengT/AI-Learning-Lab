@@ -8,12 +8,14 @@ Python
 
 ## 项目规则
 
+本项目采用单 Agent SkillHub 模式。`MaterialPlanningAgent` 是当前唯一正式业务 Agent；新能力优先新增 Skill，不新增业务 Agent。
+
 
 ### 文件职责
 
 agents:
 
-负责Agent逻辑。
+负责唯一正式 Agent 的流程决策与 Skill Router 调用。旧 Agent 文件仅用于接口兼容，禁止增加业务逻辑。
 
 
 skills:

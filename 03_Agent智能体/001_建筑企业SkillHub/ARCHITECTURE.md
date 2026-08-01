@@ -6,6 +6,9 @@ V2.0
 目标：
 构建建筑行业AI Agent平台。
 
+项目位置：
+`03_Agent智能体/001_建筑企业SkillHub/`
+
 当前阶段：
 实现材料计划Agent。
 
@@ -84,22 +87,15 @@ knowledge/
 
 # 当前Agent
 
-## MaterialAgent
+## MaterialPlanningAgent
 
 负责：
 
 材料计划生成。
 
+当前采用单 Agent SkillHub 模式，不新增业务 Agent。
 
-未来扩展：
-
-DrawingAgent
-
-CostAgent
-
-QualityAgent
-
-SafetyAgent
+未来图纸、成本、质量、安全能力优先扩展为 Drawing Skill、Cost Skill、Quality Skill、Safety Skill，并注册到 SkillHub。
 
 
 ---
