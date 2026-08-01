@@ -3,25 +3,13 @@ from dotenv import load_dotenv
 import os
 
 from pathlib import Path
-
 from tools import calculate_material
+from planner import Planner
 
 
-# 加载环境变量
 load_dotenv()
 
 
-client = OpenAI(
-
-    api_key=os.getenv("DEEPSEEK_API_KEY"),
-
-    base_url="https://api.deepseek.com"
-
-)
-
-
-
-# 加载角色提示词
 
 def load_prompt(file):
 
@@ -33,76 +21,108 @@ def load_prompt(file):
 
 
 
-
 class BuildingAgent:
 
 
     def __init__(self):
 
-        self.name = "建筑料账员Agent"
+        self.client = OpenAI(
+
+            api_key=os.getenv(
+                "DEEPSEEK_API_KEY"
+            ),
+
+            base_url=
+            "https://api.deepseek.com"
+        )
 
 
-        self.system_prompt = load_prompt(
-            "material_agent.txt"
+        self.planner = Planner()
+
+
+
+    def run(self,task):
+
+
+        # 任务规划
+
+        plan = self.planner.create_plan(
+            task
         )
 
 
 
-    # 调用材料计算工具
+        # 根据任务选择角色
 
-    def calculate_material_plan(
-            self,
-            area,
-            floors
-    ):
+        if "材料" in task:
+
+            system_prompt = load_prompt(
+                "material_agent.txt"
+            )
 
 
-        result = calculate_material(
+        elif "成本" in task:
 
-            area,
+            system_prompt = load_prompt(
+                "cost_agent.txt"
+            )
 
-            floors
 
+        else:
+
+            system_prompt = load_prompt(
+                "building_agent.txt"
+            )
+
+
+
+        # 工具计算
+
+        material_result = calculate_material(
+            20000,
+            20
         )
 
 
-        return result
 
-
-
-    # AI回答功能
-
-    def run(self, task):
-
-
-        response = client.chat.completions.create(
-
+        response = self.client.chat.completions.create(
 
             model="deepseek-chat",
 
 
             messages=[
 
-
                 {
-
                     "role":"system",
-
-                    "content":self.system_prompt
-
+                    "content":system_prompt
                 },
 
 
                 {
-
                     "role":"user",
 
-                    "content":task
+                    "content":
+                    f"""
+                    用户需求：
 
+                    {task}
+
+
+                    Agent规划：
+
+                    {plan}
+
+
+                    计算数据：
+
+                    {material_result}
+
+
+                    请生成最终报告。
+                    """
                 }
 
             ]
-
 
         )
 
