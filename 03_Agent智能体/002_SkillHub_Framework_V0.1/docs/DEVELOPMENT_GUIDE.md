@@ -55,3 +55,20 @@
 ## 7. 完成定义
 
 代码、测试、文档、版本和审计契约同时完成才算交付。任何通过跨层调用实现的“可运行”结果都不满足完成定义。
+
+## 8. README 维护规范
+
+README 是 Project Dashboard（项目驾驶舱），用于呈现项目当前状态和决策所需的稳定信息，不作为开发日志。
+
+重大版本更新和核心模块状态变化必须同步维护 README，至少更新：
+
+- 当前版本；
+- 架构状态；
+- 模块完成情况；
+- 当前开发任务；
+- Roadmap；
+- Documentation 与 Architecture Freeze 信息。
+
+单个函数修改、Bug 修复、参数调整和内部代码重构不需要逐项写入 README，应通过 Git commit 和 CHANGELOG 管理。
+
+禁止把 README 写成按时间排列的开发日志。详细维护标准见 `README_MAINTENANCE_RULES.md`。
