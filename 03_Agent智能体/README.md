@@ -7,6 +7,7 @@
 | 编号 | 项目 | 架构 | 状态 |
 |---|---|---|---|
 | 001 | [建筑企业 SkillHub](./001_建筑企业SkillHub/) | 单 Agent + SkillHub | 开发中 |
+| 002 | [SkillHub Framework V0.1](./002_SkillHub_Framework_V0.1/) | Framework 工程骨架 | 可运行 Demo |
 
 每个项目独立管理自己的 Agent、Skills、Knowledge、Prompts、测试数据和输出。
 
