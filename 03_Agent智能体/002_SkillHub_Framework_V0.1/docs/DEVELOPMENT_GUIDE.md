@@ -72,3 +72,27 @@ README 是 Project Dashboard（项目驾驶舱），用于呈现项目当前状�
 单个函数修改、Bug 修复、参数调整和内部代码重构不需要逐项写入 README，应通过 Git commit 和 CHANGELOG 管理。
 
 禁止把 README 写成按时间排列的开发日志。详细维护标准见 `README_MAINTENANCE_RULES.md`。
+
+## 9. 代码工程规范
+
+所有 Codex 任务和人工开发必须遵守 `CODING_STANDARDS.md`。开始实现前，应确认 Python 3.11 环境、数据契约、模块职责、配置来源、异常策略、日志字段和测试方案。
+
+### 强制要求
+
+- 为跨模块接口明确 Input Schema 与 Output Schema；
+- 未经评审不得增加、删除字段或修改字段类型；
+- 文件 I/O、网络、MCP 和 LLM 调用必须包含异常、超时、有限重试和资源释放；
+- 使用依赖注入，禁止业务模块硬编码基础设施；
+- 日志按 INFO/ERROR 分级，并支持 `trace_id`、`task_id`、`doc_id`、`page`、`skill_name`；
+- 文件批处理预留异步执行接口，禁止固化长时间阻塞模式；
+- Word、Excel、PDF、CAD 和文本切片参数必须配置化并保留 source metadata；
+- API Key、路径和运行参数统一由 config/environment 提供；
+- Agent、Skill、Service、MCP Server 必须遵守 Constitution 职责边界。
+
+### 开发任务交付
+
+交付前先说明实现思路、架构影响和限制，再提供完整可运行代码与测试证据。禁止用残缺代码或 Demo 替代要求的正式实现；无法满足的数据契约或环境能力必须明确报告。
+
+### 演进兼容
+
+接口设计应支持 MD → RAG、Local Queue → Redis、Single Agent → Multi Agent 的未来迁移，但不得未经 Constitution 和版本评审提前改变当前冻结架构。
