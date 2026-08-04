@@ -22,3 +22,6 @@ __all__ = [
     "generate_span_id",
     "generate_trace_id",
 ]
+from .invocation_context import InvocationContext
+
+__all__ = ["InvocationContext"]

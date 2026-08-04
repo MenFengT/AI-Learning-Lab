@@ -7,6 +7,7 @@ from typing import Any, Protocol
 from uuid import uuid4
 
 from .execution_context import ExecutionContext
+from .invocation_context import InvocationContext
 from .lifecycle import Lifecycle, LifecycleStatus
 from .trace import Trace
 
@@ -97,6 +98,23 @@ class RuntimeManager:
             return self._environments[task_id]
         except KeyError as exc:
             raise KeyError(f"任务运行环境不存在：{task_id}") from exc
+
+    def create_invocation_context(
+        self, task_id: str, skill_id: str
+    ) -> InvocationContext:
+        """为已路由的 Skill 创建同一 trace 下的独立执行 span。"""
+        environment = self.get_environment(task_id)
+        if environment.lifecycle.status is not LifecycleStatus.PLANNING:
+            raise ValueError("只有PLANNING状态可以创建Skill调用上下文")
+        child_trace = environment.trace.create_child()
+        return InvocationContext(
+            task_id=environment.context.task_id,
+            trace_id=child_trace.trace_id,
+            span_id=child_trace.span_id,
+            skill_id=skill_id,
+            user_id=environment.context.user_id,
+            metadata=environment.context.metadata,
+        )
 
     def transition(self, task_id: str, next_status: LifecycleStatus) -> None:
         environment = self.get_environment(task_id)

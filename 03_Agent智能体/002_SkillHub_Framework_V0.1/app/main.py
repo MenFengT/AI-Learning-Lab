@@ -1,14 +1,46 @@
 from app.config.settings import Settings
 from app.core.agent import SkillHubAgent
+from app.core.skill_resolver import InMemorySkillResolver
 from app.core.skill_router import SkillRouter
+from app.registry import (
+    HealthStatus,
+    SkillLifecycleStatus,
+    SkillMetadata,
+    SkillRegistration,
+    SkillRegistry,
+    build_skill_id,
+)
+from app.runtime.runtime_manager import RuntimeManager
 from app.skills.demo_skill import DemoSkill
 
 
 def build_agent() -> SkillHubAgent:
-    """在启动层集中装配 Router、Skill 与唯一 Agent。"""
-    router = SkillRouter()
-    router.register(DemoSkill())
-    return SkillHubAgent(router)
+    """在 Composition Root 集中装配 Registry、Runtime、Router 与 Skill。"""
+    skill = DemoSkill()
+    version = "0.2.0"
+    skill_id = build_skill_id("local", skill.name, version)
+    registration = SkillRegistration(
+        skill_id=skill_id,
+        namespace="local",
+        name=skill.name,
+        version=version,
+        manifest_version="0.2",
+        metadata=SkillMetadata(
+            name=skill.name,
+            version=version,
+            description=skill.description,
+            inputs=(),
+            outputs=(),
+            keywords=skill.keywords,
+        ),
+        lifecycle_status=SkillLifecycleStatus.ACTIVE,
+        health_status=HealthStatus.HEALTHY,
+    )
+    registry = SkillRegistry()
+    registry.register(registration)
+    router = SkillRouter(registry)
+    resolver = InMemorySkillResolver({skill_id: skill})
+    return SkillHubAgent(router, RuntimeManager(), resolver)
 
 
 def main() -> None:

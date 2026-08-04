@@ -5,9 +5,20 @@ from pathlib import Path
 from app.config.settings import Settings
 from app.core.agent import SkillHubAgent
 from app.core.context import TaskContext
+from app.core.skill_resolver import InMemorySkillResolver
 from app.core.skill_router import SkillRouter
 from app.knowledge.knowledge_router import KnowledgeRouter
 from app.main import build_agent
+from app.registry import (
+    DuplicateSkillError,
+    HealthStatus,
+    SkillLifecycleStatus,
+    SkillMetadata,
+    SkillRegistration,
+    SkillRegistry,
+    build_skill_id,
+)
+from app.runtime.runtime_manager import RuntimeManager
 from app.skills.base_skill import BaseSkill
 
 
@@ -27,36 +38,63 @@ class TrackingSkill(BaseSkill):
         return context.user_task
 
 
+def build_registration(skill: BaseSkill) -> SkillRegistration:
+    version = "0.2.0"
+    return SkillRegistration(
+        skill_id=build_skill_id("local", skill.name, version),
+        namespace="local",
+        name=skill.name,
+        version=version,
+        manifest_version="0.2",
+        metadata=SkillMetadata(
+            name=skill.name,
+            version=version,
+            description=skill.description,
+            inputs=(),
+            outputs=(),
+            keywords=skill.keywords,
+        ),
+        lifecycle_status=SkillLifecycleStatus.ACTIVE,
+        health_status=HealthStatus.HEALTHY,
+    )
+
+
 class SkillHubFrameworkTests(unittest.TestCase):
     def test_minimum_demo_chain(self) -> None:
         result = build_agent().run("请演示任务，返回结果")
         self.assertEqual(result, "DemoSkill 已处理任务：请演示任务；返回结果")
 
     def test_router_selects_but_does_not_execute(self) -> None:
-        router = SkillRouter()
         skill = TrackingSkill()
-        router.register(skill)
+        registration = build_registration(skill)
+        registry = SkillRegistry()
+        registry.register(registration)
+        router = SkillRouter(registry)
 
         selected = router.select("请跟踪这个任务")
 
-        self.assertIs(selected, skill)
+        self.assertEqual(selected.skill_id, registration.skill_id)
         self.assertFalse(skill.executed)
 
     def test_agent_schedules_selected_skill(self) -> None:
-        router = SkillRouter()
         skill = TrackingSkill()
-        router.register(skill)
+        registration = build_registration(skill)
+        registry = SkillRegistry()
+        registry.register(registration)
+        router = SkillRouter(registry)
+        resolver = InMemorySkillResolver({registration.skill_id: skill})
 
-        result = SkillHubAgent(router).run("跟踪任务")
+        result = SkillHubAgent(router, RuntimeManager(), resolver).run("跟踪任务")
 
         self.assertEqual(result, "跟踪任务")
         self.assertTrue(skill.executed)
 
     def test_registry_rejects_duplicate_name(self) -> None:
-        router = SkillRouter()
-        router.register(TrackingSkill())
-        with self.assertRaises(ValueError):
-            router.register(TrackingSkill())
+        registry = SkillRegistry()
+        registration = build_registration(TrackingSkill())
+        registry.register(registration)
+        with self.assertRaises(DuplicateSkillError):
+            registry.register(registration)
 
     def test_knowledge_router_reads_md_index(self) -> None:
         router = KnowledgeRouter(Settings().knowledge_root)
