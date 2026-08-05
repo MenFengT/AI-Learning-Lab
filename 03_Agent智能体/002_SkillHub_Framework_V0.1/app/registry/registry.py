@@ -42,6 +42,13 @@ class SkillRegistry:
     def unregister(self, skill_id: str) -> SkillRegistration:
         return self._store.remove(skill_id)
 
+    def get_by_id(self, skill_id: str) -> SkillRegistration:
+        """按稳定身份精确查询 Skill Descriptor。"""
+        registration = self._store.get(skill_id)
+        if registration is None:
+            raise SkillNotFoundError(f"Skill不存在：{skill_id}")
+        return registration
+
     def get(
         self, name: str, version: str, *, namespace: str = "local"
     ) -> SkillRegistration:

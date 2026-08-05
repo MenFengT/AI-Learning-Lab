@@ -16,6 +16,8 @@ class RegistryStore(Protocol):
 
 
 class SkillCatalog(Protocol):
+    def get_by_id(self, skill_id: str) -> SkillRegistration: ...
+
     def get(
         self, name: str, version: str, *, namespace: str = "local"
     ) -> SkillRegistration: ...

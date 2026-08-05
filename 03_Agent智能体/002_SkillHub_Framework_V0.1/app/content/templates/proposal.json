@@ -1,0 +1,10 @@
+{
+  "schema_version": "0.1",
+  "document_type": "proposal",
+  "sections": [
+    {"section_id": "background", "title": "项目背景", "order": 1, "instructions": "说明现状、问题和建设必要性。", "required_knowledge": ["domain_context"]},
+    {"section_id": "objectives", "title": "建设目标", "order": 2, "instructions": "给出可核验的总体目标和分项目标。", "required_knowledge": ["domain_requirements"]},
+    {"section_id": "implementation", "title": "实施方案", "order": 3, "instructions": "描述实施路径、阶段和责任边界。", "required_knowledge": ["domain_practices", "standards"]},
+    {"section_id": "outcomes", "title": "预期成果", "order": 4, "instructions": "列出交付成果与验收指标。", "required_knowledge": []}
+  ]
+}

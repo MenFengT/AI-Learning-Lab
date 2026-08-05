@@ -1,0 +1,10 @@
+{
+  "schema_version": "0.1",
+  "document_type": "report",
+  "sections": [
+    {"section_id": "summary", "title": "概述", "order": 1, "instructions": "概括报告范围、周期和核心结论。", "required_knowledge": ["domain_context"]},
+    {"section_id": "progress", "title": "工作情况", "order": 2, "instructions": "按事实说明进展、成果和数据。", "required_knowledge": ["domain_facts"]},
+    {"section_id": "issues", "title": "问题分析", "order": 3, "instructions": "区分事实、原因和影响。", "required_knowledge": ["domain_rules", "standards"]},
+    {"section_id": "actions", "title": "后续计划", "order": 4, "instructions": "提出明确行动、责任和时间要求。", "required_knowledge": []}
+  ]
+}

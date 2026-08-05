@@ -104,7 +104,10 @@ class RuntimeManager:
     ) -> InvocationContext:
         """为已路由的 Skill 创建同一 trace 下的独立执行 span。"""
         environment = self.get_environment(task_id)
-        if environment.lifecycle.status is not LifecycleStatus.PLANNING:
+        if environment.lifecycle.status not in {
+            LifecycleStatus.PLANNING,
+            LifecycleStatus.EXECUTING,
+        }:
             raise ValueError("只有PLANNING状态可以创建Skill调用上下文")
         child_trace = environment.trace.create_child()
         return InvocationContext(

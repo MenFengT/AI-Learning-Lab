@@ -145,7 +145,7 @@ class MCPClient:
             "method": "tools/call",
             "params": {
                 "name": request.tool_name,
-                "arguments": deepcopy(dict(request.arguments)),
+                "arguments": _to_plain(request.arguments),
                 "_meta": {
                     "task_id": runtime.task_id,
                     "trace_id": runtime.trace_id,
@@ -179,8 +179,10 @@ class MCPClient:
                 span_id=request.runtime_context.span_id,
                 duration_ms=duration_ms,
                 attempts=1,
-                metadata={"task_id": request.runtime_context.task_id,
-                          "skill_id": request.runtime_context.skill_id},
+                metadata={
+                    "task_id": request.runtime_context.task_id,
+                    "skill_id": request.runtime_context.skill_id,
+                },
             )
         if "content" not in raw_response:
             raise MCPTransportProtocolError("MCP成功响应缺少content")
@@ -200,7 +202,6 @@ class MCPClient:
                 "skill_id": request.runtime_context.skill_id,
             },
         )
-
     def _error_response(
         self,
         request: MCPRequest,
@@ -224,3 +225,12 @@ class MCPClient:
                 "skill_id": request.runtime_context.skill_id,
             },
         )
+
+
+def _to_plain(value: Any) -> Any:
+    """将不可变契约容器转换为Transport可复制的普通协议数据。"""
+    if isinstance(value, Mapping):
+        return {str(key): _to_plain(child) for key, child in value.items()}
+    if isinstance(value, (list, tuple, set, frozenset)):
+        return [_to_plain(child) for child in value]
+    return deepcopy(value)

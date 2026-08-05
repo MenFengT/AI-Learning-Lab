@@ -1,0 +1,11 @@
+{
+  "schema_version": "0.1",
+  "document_type": "paper",
+  "sections": [
+    {"section_id": "abstract", "title": "摘要", "order": 1, "instructions": "概括研究目的、方法、结果和结论。", "required_knowledge": []},
+    {"section_id": "background", "title": "研究背景", "order": 2, "instructions": "说明研究问题、现状和研究价值。", "required_knowledge": ["literature"]},
+    {"section_id": "method", "title": "研究方法", "order": 3, "instructions": "说明数据、方法、假设和限制。", "required_knowledge": ["methodology"]},
+    {"section_id": "discussion", "title": "分析与讨论", "order": 4, "instructions": "基于证据分析结果并讨论边界。", "required_knowledge": ["research_evidence"]},
+    {"section_id": "conclusion", "title": "结论", "order": 5, "instructions": "总结发现、贡献和后续研究方向。", "required_knowledge": []}
+  ]
+}

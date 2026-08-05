@@ -1,10 +1,15 @@
 import re
+from typing import Any, Mapping
 
 from app.core.context import TaskContext
 from app.core.skill_resolver import SkillResolver
 from app.core.skill_router import SkillRouter
 from app.runtime.lifecycle import LifecycleStatus
 from app.runtime.runtime_manager import RuntimeManager
+from app.planner.models import UserRequest
+from app.planner.protocols import PlannerProtocol
+from app.execution.protocols import TaskPlanExecutorProtocol
+from app.execution.models import ExecutionResult
 
 
 class SkillHubAgent:
@@ -54,6 +59,37 @@ class SkillHubAgent:
                     "error": str(failure_exc),
                 }
             raise
+
+    def execute_plan(
+        self,
+        user_task: str,
+        planner: PlannerProtocol,
+        executor: TaskPlanExecutorProtocol,
+        *,
+        user_id: str | None = None,
+        inputs: Mapping[str, Any] | None = None,
+        metadata: Mapping[str, Any] | None = None,
+    ) -> ExecutionResult:
+        """创建Runtime任务并委托Planner产出计划；执行权仍属于Executor。"""
+        task = user_task.strip()
+        if not task:
+            raise ValueError("用户任务不能为空")
+        environment = self._runtime_manager.create_environment(
+            task,
+            user_id=user_id,
+            inputs=dict(inputs or {}),
+            metadata=dict(metadata or {}),
+        )
+        plan = planner.create_plan(
+            UserRequest(
+                task_id=environment.context.task_id,
+                user_request=task,
+                user_id=user_id,
+                inputs=inputs or {},
+                metadata=metadata or {},
+            )
+        )
+        return executor.execute(plan)
 
     @staticmethod
     def _decompose(task: str) -> list[str]:

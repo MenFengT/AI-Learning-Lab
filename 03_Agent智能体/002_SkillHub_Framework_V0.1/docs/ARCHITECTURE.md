@@ -25,6 +25,55 @@ Knowledge Router / Tools
 
 依赖只能沿箭头向下。下层不得反向依赖、调用或控制上层。
 
+### V0.3 Planner Contract Layer
+
+复杂任务的规划链路固定为：
+
+```text
+用户
+ → SkillHub Agent
+ → RuntimeManager
+ → Planner
+ → TaskPlan
+ → Skill Router
+ → Skill
+ → Service Governance Layer
+ → MCP Client
+ → MCP Server
+ → Tool
+```
+
+Planner 是纯计划生成边界，只负责将规范化的 `UserRequest` 拆解为可验证的
+`TaskPlan`。计划步骤只能通过稳定 `skill_id` 引用能力，并声明输入 Schema、依赖、
+预期输出和初始状态；不得保存 Skill 实例、Service、MCP、Tool 或任何连接对象。
+
+Planner 允许使用显式注入的计划草案提供者辅助意图理解和步骤生成。该提供者即使由
+LLM 实现，也只能返回计划草案：LLM 不得控制主循环、决定是否继续执行、直接选择
+Tool、调用 MCP 或控制 Service。
+
+Planner 不负责：
+
+- 执行计划或调用 Skill；
+- 推进步骤状态或控制任务生命周期；
+- 重试、错误恢复或循环调度；
+- 访问 Knowledge、FileSystem、MCP Server 或 Tool；
+- 直接依赖具体 Skill、Registry 实现或业务 Service。
+
+RuntimeManager 是计划执行权的唯一所有者。后续执行集成由 Runtime 读取已经验证的
+`TaskPlan`，按依赖关系推进步骤状态，并为每次 Skill 调用创建运行时上下文；Planner
+不能反向修改 Runtime 状态。当前 V0.3 阶段只建立 Planner Contract，不改变 V0.2
+已经冻结的主执行链。
+
+`TaskPlan` 至少包含 `plan_id`、`task_id`、`created_at`、`steps` 和 `metadata`。
+`PlanStep` 至少包含 `step_id`、`order`、`skill_id`、`input_schema`、`dependency`、
+`expected_output` 和 `status`。Planner 输出时所有步骤必须为 `PENDING`；后续状态变更
+只能由 Runtime 管理。
+
+V0.2 Skill Router 当前按任务元数据查询候选 Skill。接入 TaskPlan 执行时只允许做最小
+兼容扩展：在 `SkillCatalogProtocol` 增加按稳定 `skill_id` 精确查询，并由 Router 增加
+对应的精确选择入口。Router 仍不得创建、注册或执行 Skill，也不得管理生命周期；本
+阶段不修改 Router，以避免破坏 V0.2 Foundation Freeze。
+
 ## 3. 强制职责边界
 
 ### SkillHub Agent
