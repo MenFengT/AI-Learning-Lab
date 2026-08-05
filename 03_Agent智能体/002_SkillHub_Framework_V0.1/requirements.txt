@@ -1,0 +1,5 @@
+# Safe YAML parser for Skill manifests.
+PyYAML>=6.0.2,<7.0
+
+# Official MCP Python client SDK for the external OfficeCLI server.
+mcp==1.27.2

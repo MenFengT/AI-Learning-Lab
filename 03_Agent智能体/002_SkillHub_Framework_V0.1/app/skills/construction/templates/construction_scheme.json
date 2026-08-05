@@ -1,0 +1,12 @@
+{
+  "document_type": "construction_scheme",
+  "schema_version": "0.1",
+  "sections": [
+    {"section_id": "project_overview", "title": "1 工程概况", "order": 1, "guidance": "说明工程范围、规模及主要特点。"},
+    {"section_id": "basis", "title": "2 编制依据", "order": 2, "guidance": "列明合同、图纸、规范及企业标准。"},
+    {"section_id": "preparation", "title": "3 施工准备", "order": 3, "guidance": "说明人员、材料、机械及现场准备。"},
+    {"section_id": "process", "title": "4 施工工艺", "order": 4, "guidance": "说明工艺流程、操作方法和关键参数。"},
+    {"section_id": "quality", "title": "5 质量控制", "order": 5, "guidance": "说明质量目标、检查方法和验收要求。"},
+    {"section_id": "safety", "title": "6 安全文明施工", "order": 6, "guidance": "说明安全风险、控制措施和文明施工要求。"}
+  ]
+}

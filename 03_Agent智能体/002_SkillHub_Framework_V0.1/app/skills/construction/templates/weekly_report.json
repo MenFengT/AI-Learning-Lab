@@ -1,0 +1,12 @@
+{
+  "document_type": "weekly_report",
+  "schema_version": "0.1",
+  "sections": [
+    {"section_id": "summary", "title": "1 本周概况", "order": 1, "guidance": "概述本周施工总体情况。"},
+    {"section_id": "progress", "title": "2 进度完成情况", "order": 2, "guidance": "对比计划说明各项工作完成情况。"},
+    {"section_id": "quality_safety", "title": "3 质量安全情况", "order": 3, "guidance": "说明检查、整改和风险控制情况。"},
+    {"section_id": "resources", "title": "4 资源投入", "order": 4, "guidance": "统计人员、材料和机械投入。"},
+    {"section_id": "issues", "title": "5 问题与协调", "order": 5, "guidance": "列明问题、责任人和协调需求。"},
+    {"section_id": "next_week", "title": "6 下周计划", "order": 6, "guidance": "说明下周任务、节点和保障措施。"}
+  ]
+}

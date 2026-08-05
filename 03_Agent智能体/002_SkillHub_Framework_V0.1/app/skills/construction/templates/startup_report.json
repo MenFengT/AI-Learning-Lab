@@ -1,0 +1,12 @@
+{
+  "document_type": "startup_report",
+  "schema_version": "0.1",
+  "sections": [
+    {"section_id": "project_overview", "title": "1 项目概况", "order": 1, "guidance": "说明项目基本信息与合同范围。"},
+    {"section_id": "conditions", "title": "2 开工条件", "order": 2, "guidance": "核查手续、图纸、场地及资源条件。"},
+    {"section_id": "organization", "title": "3 组织准备", "order": 3, "guidance": "说明管理体系及人员到岗情况。"},
+    {"section_id": "resources", "title": "4 资源准备", "order": 4, "guidance": "说明材料、机械和临建设施准备。"},
+    {"section_id": "schedule", "title": "5 进度安排", "order": 5, "guidance": "说明开工日期、关键节点及近期计划。"},
+    {"section_id": "assurance", "title": "6 保证措施", "order": 6, "guidance": "说明质量、安全和环境保证措施。"}
+  ]
+}

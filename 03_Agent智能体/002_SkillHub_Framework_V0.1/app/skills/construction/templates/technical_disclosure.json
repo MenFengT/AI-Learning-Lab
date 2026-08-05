@@ -1,0 +1,11 @@
+{
+  "document_type": "technical_disclosure",
+  "schema_version": "0.1",
+  "sections": [
+    {"section_id": "scope", "title": "1 交底范围", "order": 1, "guidance": "明确分项工程、作业区域和适用班组。"},
+    {"section_id": "basis", "title": "2 技术依据", "order": 2, "guidance": "列明图纸、方案和规范依据。"},
+    {"section_id": "method", "title": "3 施工方法", "order": 3, "guidance": "说明作业顺序、工艺参数和操作要点。"},
+    {"section_id": "quality", "title": "4 质量要求", "order": 4, "guidance": "说明允许偏差、检查方法和成品保护。"},
+    {"section_id": "safety", "title": "5 安全事项", "order": 5, "guidance": "说明危险源、个人防护和应急要求。"}
+  ]
+}
